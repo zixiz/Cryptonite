@@ -58,9 +58,13 @@ $(document).ready(()=>{
     function moreInfoButton(){
         $(".moreinfo").click((event)=>{
             let coinId = event.target.parentElement.children[2].children[0].id;
-            // $(`#${coinId}`).html(`this is ${coinId} and I'm Great`)
-            moreInfoContent(coinId)
-            waitAjax(coinId)
+            console.log("from ajax");
+            waitAjax(coinId);
+            moreInfoContent(coinId);
+            
+            
+            
+            
         })
     }
     function moreInfoContent(coinId){
@@ -74,15 +78,18 @@ $(document).ready(()=>{
                     <br>
                     <img class="tumbImage" src="${result.image.thumb}">
                     <br>
-                    <span>NIS value: ${result.market_data.current_price.ils.toFixed(5)}</span>
+                    <span>NIS ₪ value: ${result.market_data.current_price.ils.toFixed(5)}</span>
                     <br>
-                    <span>USD value: ${result.market_data.current_price.usd.toFixed(5)}</span>
+                    <span>USD $ value: ${result.market_data.current_price.usd.toFixed(5)}</span>
                     <br>
-                    <span>EUR value: ${result.market_data.current_price.eur.toFixed(5)}</span>
+                    <span>EUR € value: ${result.market_data.current_price.eur.toFixed(5)}</span>
                     `)
                 },
                 error:function(error){
-                   
+                    $(`#${error.id}`).html(`
+                    <br>
+                    <span>Sorry but: ${error.id} not found</span>
+                    `)
                 }
             });
     }
@@ -90,7 +97,7 @@ $(document).ready(()=>{
     function waitAjax(idelemnt){
         $(`#${idelemnt}`).html(`
         <div class="text-center">
-            <div class="spinner-border" role="status">
+            <div class="spinner-border text-dark" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
