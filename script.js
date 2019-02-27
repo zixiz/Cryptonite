@@ -10,10 +10,12 @@ $(document).ready(()=>{
                 type:"GET",
                 url:`${page}.html`,
                 success:function(result){
-                    $("#content-container").empty();
-                    $("#content-container").html(result);
+                    // $("#content-container").empty();
+                    $("#content-container").append(result);
                     if(page == "homepage"){
-                        homePageAjCall()
+                        homePageAjCall();
+                    }else if(page == "liveReport"){
+
                     }
 
                     
@@ -24,7 +26,17 @@ $(document).ready(()=>{
     }
     
     loadPage("homepage");
-   
+    loadPage("liveReport");
+    $("#homePageButton").click(function(){
+        $("#livereportcontent").hide();
+        $("#home-page-content").show();
+    })
+   $("#liveReportButton").click(function(){
+    $("#home-page-content").hide();
+    $("#livereportcontent").show();
+    liveReport();
+    
+   })
     
     // $(".checkinput").click(()=>{
     //     console.log("in");
@@ -93,8 +105,9 @@ $(document).ready(()=>{
             console.log(div);
             if($(this).prop('checked')){
                 checkFavorites(div);
-            }else{
-
+            }else if($(this).prop('checked'),true){
+                let uncheckedDiv=arrfav.indexOf(div)
+                arrfav.splice(uncheckedDiv,1);
             }
         })
     }
@@ -154,43 +167,15 @@ $(document).ready(()=>{
     }
 
     function ModalCancelButton(){
-        $("#modalCloser").click(()=>{
+        $("#modalCloser,#modalLitleCloser").click(()=>{
             $(extraCard).find(".checkinput").prop('checked',false);
         });
     }
-    // function toggleButton(){
-    //     $(".checkinput").click(function(){
-    //         let toggleValue = $(this).prop("checked")
-    //         let div = $(this).closest(".card")[0]
-    //         console.log(toggleValue)
-    //         if(toggleValue == true){
-    //             console.log(div)
-    //             arrfav.push(div)
-    //         }else if(toggleValue == false){
-    //             for(let i =0; i < arrfav.length;i++){
-    //                 if(arrfav[i] == div){
-    //                     arrfav.splice(i,1)
-    //                 }
-    //             }
-    //         }
-    //         if(arrfav.length > 5){
-    //             for(let i =0; i <arrfav.length;i++){
-    //                 $('.modal-body').append($(arrfav[i]))
-    //             } 
-                
-    //             $("#exampleModal").modal('show')
-                
-    //         }
-
-    //         });
-    // }
-
-    
 
     function moreInfoButton(){
         $(".moreinfo").on("click",function(event){
             let coinId = event.target.parentElement.children[2].children[0].id;
-                waitAjax(coinId)
+                waitAjaxforcoin(coinId)
                 let timeout = 120000;
                 let current_time = Date.now();
                 let available_coin = JSON.parse(localStorage.getItem(`${coinId}`));
@@ -235,16 +220,12 @@ $(document).ready(()=>{
             
             )
             
-            // moreInfoContent(coinId);
-            // console.log("from ajax");
-            // waitAjax(coinId);  
+
         }
     
-    // function moreInfoContent(coinId){
 
-    // }
 
-    function waitAjax(idelemnt){
+    function waitAjaxforcoin(idelemnt){
         $(`#${idelemnt}`).html(`
         <div class="text-center">
             <div class="spinner-border text-dark" role="status">
@@ -252,12 +233,240 @@ $(document).ready(()=>{
             </div>
         </div>
         `)
+
     }
 
-   
-    
+
+
+    function liveReport(){
+
+            if (arrfav.length == 0) {
+            $("#livereportcontent").hide();
+            $("#home-page-content").show();
+            alert("Please choose currencies to analyze using the toggle button.");
+
+        
+            }else {
+
+              $("#livereportcontent").empty();
+
+        
+              $("livereportcontent").html(`<div id="chartContainer" style="height: 500px; width: 100%;"></div>`);
+            
+              currency1 = [];
+              currency2 = [];
+              currency3 = [];
+              currency4 = [];
+              currency5 = [];
+              currency_graph_names =[];
+        
+              function Get_Data() {
+                let one = $(arrfav[0]).find(".card-header").text().toUpperCase()
+                let two = $(arrfav[1]).find(".card-header").text().toUpperCase()
+                let three = $(arrfav[2]).find(".card-header").text().toUpperCase()
+                let four = $(arrfav[3]).find(".card-header").text().toUpperCase()
+                let five = $(arrfav[4]).find(".card-header").text().toUpperCase()
+                $.ajax({
+        
+                  type: 'GET',
+        
+                  url: `https://min-api.cryptocompare.com/data/pricemulti?fsyms=${one.trim()},${two.trim()},${three.trim()},${four.trim()},${five.trim()}&tsyms=USD`,
+        
+                  success: function (result) {
+        
+                    if (result.Response == "Error") {
+                      alert("There's no data to analyze from any of your chosen currencies. Please choose different ones. ");
+                      clearInterval(Interval_id);
+                      $("#homePageButton").click();
+                    }
+        
+                    else {
+                        
+                      var time = new Date();
+        
+                      let counter = 1
+        
+                      for (let key in result) {
+        
+                        if (counter == 1) {
+        
+                          currency1.push({ x: time, y: result[key].USD });
+                          currency_graph_names.push(key);
+        
+                        }
+        
+                        if (counter == 2) {
+        
+                          currency2.push({ x: time, y: result[key].USD });
+                          currency_graph_names.push(key);
+        
+                        }
+        
+                        if (counter == 3) {
+        
+                          currency3.push({ x: time, y: result[key].USD });
+                          currency_graph_names.push(key);
+        
+                        }
+        
+                        if (counter == 4) {
+        
+                          currency4.push({ x: time, y: result[key].USD });
+                          currency_graph_names.push(key);
+        
+                        }
+        
+                        if (counter == 5) {
+        
+                          currency5.push({ x: time, y: result[key].USD });
+                          currency_graph_names.push(key);
+        
+                        }
+        
+                        counter++;
+        
+                      }
+        
+                      append_graph();
+        
+                    }
+        
+                  },
+                  error: function () {
+        
+                    console.log('Error: ' + result);
+        
+                  }
+        
+                })
+        
+              }
+        
+              Interval_id = setInterval(function () {
+        
+                Get_Data();
+        
+              }, 2000)
+        
+            }
+        
+        
+        
+          // --------------- Graph Script ---------------
+        
+          function append_graph() {
+        
+            var chart = new CanvasJS.Chart("livereportcontent",{
+              exportEnabled: true,
+              animationEnabled: false,
+              title: {
+                text: "Your top cryptocurrency"
+              },
+              subtitles: [{
+                text: "Hover the charts to see currency rate"
+              }],
+              axisX: {
+                valueFormatString: "HH:mm:ss"
+        
+              },
+              axisY: {
+                title: "Currency Rate",
+                titleFontColor: "#4F81BC",
+                lineColor: "#4F81BC",
+                labelFontColor: "#4F81BC",
+                tickColor: "#4F81BC",
+                includeZero: false
+              },
+              axisY2: {
+                title: "",
+                titleFontColor: "#C0504E",
+                lineColor: "#C0504E",
+                labelFontColor: "#C0504E",
+                tickColor: "#C0504E",
+                includeZero: false
+              },
+              toolTip: {
+                shared: true
+              },
+              legend: {
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+              },
+              data: [
+        
+                {
+        
+                  type: "spline",
+                  name: currency_graph_names[0],
+                  showInLegend: true,
+                  xValueFormatString: "HH:mm:ss",
+                  dataPoints: currency1
+        
+                },
+        
+                {
+        
+                  type: "spline",
+                  name: currency_graph_names[1],
+                  axisYType: "secondary",
+                  showInLegend: true,
+                  xValueFormatString: "HH:mm:ss",
+                  dataPoints: currency2
+        
+                },
+        
+                {
+        
+                  type: "spline",
+                  name: currency_graph_names[2],
+                  axisYType: "secondary",
+                  showInLegend: true,
+                  xValueFormatString: "HH:mm:ss",
+                  dataPoints: currency3
+        
+                },
+        
+                {
+        
+                  type: "spline",
+                  name: currency_graph_names[3],
+                  axisYType: "secondary",
+                  showInLegend: true,
+                  xValueFormatString: "HH:mm:ss",
+                  dataPoints: currency4
+        
+                },
+        
+                {
+        
+                  type: "spline",
+                  name: currency_graph_names[4],
+                  axisYType: "secondary",
+                  showInLegend: true,
+                  xValueFormatString: "HH:mm:ss",
+                  dataPoints: currency5
+        
+                }
+        
+              ]
+            });
+        
+            chart.render();
+        
+            function toggleDataSeries(e) {
+              if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+              } else {
+                e.dataSeries.visible = true;
+              }
+              e.chart.render();
+            }
+        
+          }
+    }
     
 })
+
 
 
 // $.ajax(
