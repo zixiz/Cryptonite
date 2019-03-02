@@ -2,7 +2,7 @@ $(document).ready(()=>{
     var arrcoins = []; // Array for coins
     var arrfav = []; // Favorite array for Toggle and Live Report
     var counter = 0;
-    // Ajax init the Page App
+    // AJAX init the Page App
     function loadPage(page){
         
         $.ajax(
@@ -25,7 +25,7 @@ $(document).ready(()=>{
     loadPage("homepage");
     loadPage("liveReport");
     loadPage("about");
-    // Click listener for navigation 
+    // Click listener for the menu 
     $("#homePageButton").click(function(){
       $("#about-content").hide();
       $("#livereportcontent").hide();
@@ -126,7 +126,7 @@ $(document).ready(()=>{
             arrfav.push(card);
         }
     }
-    // Modal logic - build the favorite coins on Modal body and add a listener for Modal coins toggle
+    // Modal logic
     function myModal(){
         $("#modalBody").empty()
         let symbol;
@@ -140,6 +140,7 @@ $(document).ready(()=>{
         ModalCancelButton()
         $("#exampleModal").modal('show')
     }
+    // Build modal body with coins and switch button
     function buildModalBody(symbol,name,index){
         $("#modalBody").append(`
         <div class="card text-white bg-secondary mt-1" >
@@ -156,19 +157,7 @@ $(document).ready(()=>{
           </div>
         `);
     }
-    // <div class="card text-white bg-secondary mt-1" >
-    //         <div class="card-header">
-    //           <h4 class="coin-symbol">${symbol}</h4>
-    //         </div>
-    //         <div class="custom-control custom-switch">
-    //           <input type="checkbox" class="custom-control-input" id="switch${index}" checked>
-    //           <label class="custom-control-label" for="switch${index}"></label>
-    //         </div>
-    //         <div class="card-body">
-    //           <h5 class="card-title">${name}</h5>
-    //         </div>
-    // </div>
-
+    // Function for the logic inside modal switch checkbox
     function actioveModalSwitch(index,symbol){
         $("#switch"+index).click(function(){
             $(arrfav[0]).find(".custom-control-input").prop('checked',false);
@@ -178,13 +167,13 @@ $(document).ready(()=>{
             $('#exampleModal').modal('hide');
         })
     }
-
+    // If the user decides to close the modal, the last coin chosen will be removed autamatically
     function ModalCancelButton(){
         $("#modalCloser,#modalLitleCloser").click(()=>{
             $(extraCard).find(".checkinput").prop('checked',false);
         });
     }
-
+    // Build more info content
     function moreInfoButton(){
         $(".moreinfo").on("click",function(event){
             let coinId = event.target.parentElement.children[2].children[0].id;
@@ -250,14 +239,13 @@ $(document).ready(()=>{
     }
 
 
-
+    // Live report for favorite coins
     function liveReport(){
 
             if (arrfav.length == 0) {
             $("#livereportcontent").hide();
             $("#home-page-content").show();
             alert("Please choose currencies to analyze using the toggle button.");
-
         
             }else {
 
@@ -266,11 +254,11 @@ $(document).ready(()=>{
         
               $("livereportcontent").html(`<div id="chartContainer" style="height: 500px; width: 100%;"></div>`);
             
-              currency1 = [];
-              currency2 = [];
-              currency3 = [];
-              currency4 = [];
-              currency5 = [];
+              currencyOne = [];
+              currencyTwo = [];
+              currencyThree = [];
+              currencyFour = [];
+              currencyFive = [];
               currency_graph_names =[];
         
               function Get_Data() {
@@ -288,7 +276,7 @@ $(document).ready(()=>{
                   success: function (result) {
         
                     if (result.Response == "Error") {
-                      alert("There's no data to analyze from any of your chosen Currencies. Please choose different ones. ");
+                      alert("There's no data to analyze from any of your chosen currencies. Please choose different ones.");
                       clearInterval(Interval_id);
                       $("#homePageButton").click();
                     }
@@ -303,35 +291,35 @@ $(document).ready(()=>{
         
                         if (counter == 1) {
         
-                          currency1.push({ x: time, y: result[key].USD });
+                          currencyOne.push({ x: time, y: result[key].USD });
                           currency_graph_names.push(key);
         
                         }
         
                         if (counter == 2) {
         
-                          currency2.push({ x: time, y: result[key].USD });
+                          currencyTwo.push({ x: time, y: result[key].USD });
                           currency_graph_names.push(key);
         
                         }
         
                         if (counter == 3) {
         
-                          currency3.push({ x: time, y: result[key].USD });
+                          currencyThree.push({ x: time, y: result[key].USD });
                           currency_graph_names.push(key);
         
                         }
         
                         if (counter == 4) {
         
-                          currency4.push({ x: time, y: result[key].USD });
+                          currencyFour.push({ x: time, y: result[key].USD });
                           currency_graph_names.push(key);
         
                         }
         
                         if (counter == 5) {
         
-                          currency5.push({ x: time, y: result[key].USD });
+                          currencyFive.push({ x: time, y: result[key].USD });
                           currency_graph_names.push(key);
         
                         }
@@ -364,7 +352,7 @@ $(document).ready(()=>{
             }
         
     
-        
+            // Canvas.js function
           function append_graph() {
         
             var chart = new CanvasJS.Chart("livereportcontent",{
@@ -411,7 +399,7 @@ $(document).ready(()=>{
                   name: currency_graph_names[0],
                   showInLegend: true,
                   xValueFormatString: "HH:mm:ss",
-                  dataPoints: currency1
+                  dataPoints: currencyOne
         
                 },
         
@@ -422,7 +410,7 @@ $(document).ready(()=>{
                   axisYType: "secondary",
                   showInLegend: true,
                   xValueFormatString: "HH:mm:ss",
-                  dataPoints: currency2
+                  dataPoints: currencyTwo
         
                 },
         
@@ -433,7 +421,7 @@ $(document).ready(()=>{
                   axisYType: "secondary",
                   showInLegend: true,
                   xValueFormatString: "HH:mm:ss",
-                  dataPoints: currency3
+                  dataPoints: currencyThree
         
                 },
         
@@ -444,7 +432,7 @@ $(document).ready(()=>{
                   axisYType: "secondary",
                   showInLegend: true,
                   xValueFormatString: "HH:mm:ss",
-                  dataPoints: currency4
+                  dataPoints: currencyFour
         
                 },
         
@@ -455,7 +443,7 @@ $(document).ready(()=>{
                   axisYType: "secondary",
                   showInLegend: true,
                   xValueFormatString: "HH:mm:ss",
-                  dataPoints: currency5
+                  dataPoints: currencyFive
         
                 }
         
@@ -477,30 +465,3 @@ $(document).ready(()=>{
     }
     
 })
-
-
-
-// $.ajax(
-        //     {
-        //         type:"GET",
-        //         url:`https://api.coingecko.com/api/v3/coins/${coinId}`,
-        //         success: function(result){
-        //             console.log(result);
-        //             $(`#${result.id}`).html(`
-        //             <br>
-        //             <img class="tumbImage" src="${result.image.thumb}">
-        //             <br>
-        //             <span>NIS ₪ value: ${result.market_data.current_price.ils.toFixed(5)}</span>
-        //             <br>
-        //             <span>USD $ value: ${result.market_data.current_price.usd.toFixed(5)}</span>
-        //             <br>
-        //             <span>EUR € value: ${result.market_data.current_price.eur.toFixed(5)}</span>
-        //             `)
-        //         },
-        //         error:function(error){
-        //             $(`#${error.id}`).html(`
-        //             <br>
-        //             <span>Sorry but: ${error.id} not found</span>
-        //             `)
-        //         }
-        //     });
