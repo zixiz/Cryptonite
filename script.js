@@ -1,8 +1,8 @@
 $(document).ready(()=>{
-    var arrcoins = [];
-    var arrfav = [];
+    var arrcoins = []; // Array for coins
+    var arrfav = []; // Favorite array for Toggle and Live Report
     var counter = 0;
-
+    // Ajax init the Page App
     function loadPage(page){
         
         $.ajax(
@@ -14,35 +14,38 @@ $(document).ready(()=>{
                     $("#content-container").append(result);
                     if(page == "homepage"){
                         homePageAjCall();
-                    }else if(page == "liveReport"){
-
+                    }else if(page == "about"){
+                      $("#about-content").hide();
                     }
-
-                    
-                    
                 }
             }
         )
     }
-    
+    // Calling homepage, live report and about.
     loadPage("homepage");
     loadPage("liveReport");
+    loadPage("about");
+    // Click listener for navigation 
     $("#homePageButton").click(function(){
-        $("#livereportcontent").hide();
-        $("#home-page-content").show();
+      $("#about-content").hide();
+      $("#livereportcontent").hide();
+      $("#home-page-content").show();
     })
    $("#liveReportButton").click(function(){
+    $("#about-content").hide();
     $("#home-page-content").hide();
     $("#livereportcontent").show();
     liveReport();
-    
    })
+   $("#aboutButton").click(function(){
+    $("#home-page-content").hide();
+    $("#livereportcontent").hide();
+    $("#about-content").show();
+  })
+
     
-    // $(".checkinput").click(()=>{
-    //     console.log("in");
-    // });
-    
-           
+
+    //Create card for coins
     function createCard(symbol,name,id){
         counter++;
         $("#home-page-content").append(
@@ -64,7 +67,7 @@ $(document).ready(()=>{
         </div>`
         )
     }
-
+    // Home page AJAX call and logics
     function homePageAjCall(){
         $.ajax(
             {
@@ -84,6 +87,7 @@ $(document).ready(()=>{
                 }
             });
     }
+    // Search function
     function search(){
         $("#searchButton").on("click",()=>{
             let searchInput = $("#theInput").val().toLowerCase();
@@ -99,6 +103,7 @@ $(document).ready(()=>{
             })
         })
     }
+    // Toggle checkbox function, listen and logic
     function toggleButton(){
         $(".checkinput").click(function(){
             let div = $(this).closest(".card")[0];
@@ -111,6 +116,7 @@ $(document).ready(()=>{
             }
         })
     }
+    // Check Favorite array for Modal
     function checkFavorites(card){
         if(arrfav.length == 5){
             extraCard = card;
@@ -120,6 +126,7 @@ $(document).ready(()=>{
             arrfav.push(card);
         }
     }
+    // Modal logic - build the favorite coins on Modal body and add a listener for Modal coins toggle
     function myModal(){
         $("#modalBody").empty()
         let symbol;
@@ -135,26 +142,32 @@ $(document).ready(()=>{
     }
     function buildModalBody(symbol,name,index){
         $("#modalBody").append(`
-        <div class="col" style="width:30%">
-                <div class="row">
-                <div class="col">
-                    <h4 class="coin-symbol">${symbol}</h4>
-                </div>
-                <div class="col">
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input" id="switch${index}" checked>
-                        <label class="custom-control-label" for="switch${index}"></label>
-                    </div>
-                </div>
+        <div class="card text-white bg-secondary mt-1" >
+            <div class="card-header">
+              <h4 class="coin-symbol">${symbol}</h4>
             </div>
-            <div class="row">
-                <div class="col">
-                    <p class="coin-name">${name}</p>
-                </div>
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="switch${index}" checked>
+              <label class="custom-control-label" for="switch${index}"></label>
             </div>
-        </div>
+            <div class="card-body">
+              <h5 class="card-title">${name}</h5>
+            </div>
+          </div>
         `);
     }
+    // <div class="card text-white bg-secondary mt-1" >
+    //         <div class="card-header">
+    //           <h4 class="coin-symbol">${symbol}</h4>
+    //         </div>
+    //         <div class="custom-control custom-switch">
+    //           <input type="checkbox" class="custom-control-input" id="switch${index}" checked>
+    //           <label class="custom-control-label" for="switch${index}"></label>
+    //         </div>
+    //         <div class="card-body">
+    //           <h5 class="card-title">${name}</h5>
+    //         </div>
+    // </div>
 
     function actioveModalSwitch(index,symbol){
         $("#switch"+index).click(function(){
@@ -275,7 +288,7 @@ $(document).ready(()=>{
                   success: function (result) {
         
                     if (result.Response == "Error") {
-                      alert("There's no data to analyze from any of your chosen currencies. Please choose different ones. ");
+                      alert("There's no data to analyze from any of your chosen Currencies. Please choose different ones. ");
                       clearInterval(Interval_id);
                       $("#homePageButton").click();
                     }
@@ -350,9 +363,7 @@ $(document).ready(()=>{
         
             }
         
-        
-        
-          // --------------- Graph Script ---------------
+    
         
           function append_graph() {
         

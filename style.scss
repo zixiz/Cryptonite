@@ -1,7 +1,18 @@
+body{
+  background-image: url("background-img.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+.jumbotron{
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .card{
-    width: 250px;
+    width: 250px; 
     display: inline-block;
-    margin: 3px;
+    margin:5px;
 }
 .tumbImage{
     display: block;
@@ -24,6 +35,11 @@
     width: 60px;
     height: 34px;
   }
+
+ .custom-switch{
+  position: relative;
+  float: right;
+ }
   
   /* Hide default HTML checkbox */
   .switch input {
@@ -79,3 +95,8 @@
   .slider.round:before {
     border-radius: 50%;
   }
+  #myPicture{
+  height: 500px;
+  
+  }
+  
